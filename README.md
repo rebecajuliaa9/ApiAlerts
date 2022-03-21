@@ -1,64 +1,487 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+## Documentação da API
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+#### CREATE USER
 
-## About Laravel
+```http
+  POST/auth/create
+```
+Essa rota é reponsável por criar usuários.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Parâmetro   | Tipo       | Descrição                           |
+| :---------- | :--------- | :---------------------------------- |
+| `name` | `string` | **Obrigatório**. Nome do usuário |
+| `email` | `string` | **Obrigatório**. Email do usuário precisa ser único. |
+| `type_user` | `boolean` | **Obrigatório**. Tipo do usuário, 0 é comum e 1 é admin |
+| `password` | `string` | **Obrigatório**. Senha do usuário |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+#### LOGIN USER
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```http
+  POST/auth/login
+```
+Essa rota é reponsável por autenticar usuários.
 
-## Learning Laravel
+| Parâmetro   | Tipo       | Descrição                                   |
+| :---------- | :--------- | :------------------------------------------ |
+| `email`      | `string` | **Obrigatório**. Email de acesso do usuário |
+| `password`      | `string` | **Obrigatório**. Senha de acesso do usuário |
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+#### Exemplo de HTTP 200
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+##### Body da requisição
 
-## Laravel Sponsors
+```http
+{
+    "email" : "admin@admin1",
+    "password" : "12345678"
+}
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+##### Resposta
 
-### Premium Partners
+```http
+{
+    "data": {
+        "token": "10|5dv8mU1iapXNWnzfkkPRZbymnUz532GKRMkqCKUC"
+    },
+    "message": "Usuário logado com sucesso"
+}
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+#### Exemplo de HTTP 401
 
-## Contributing
+##### Body da requisição
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```http
+{
+    "email" : "admin",
+    "password" : "12345678"
+}
+```
+##### Resposta
 
-## Code of Conduct
+```http
+{
+    "message" : "Credencial Inválida."
+}
+```
+#### Exemplo de HTTP 422
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+##### Body da requisição
 
-## Security Vulnerabilities
+```http
+{
+    "email" : "admin@admin1",
+    "password" : ""
+}
+```
+##### Resposta da requisição
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```http
+{
+    "message": "The given data was invalid.",
+    "errors": {
+        "password": [
+            "The password field is required."
+        ]
+    }
+}
+```
 
-## License
+#### LOGOUT USER
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```http
+  POST/auth/logout
+```
+Essa rota realizar o logout do usuário e para 
+acessar é necessário estar autenticado.
+
+#### Exemplo de HTTP 200
+#### Header da requisição
+```http
+{
+    "token" : "12|rtBuAvLQ6XHa0neGpCUsQGhEsJnEup1eCU5fY0l"
+}
+```
+
+##### Body da requisição
+
+```http
+{
+    "email" : "admin@admin8",
+    "password" : "12345678",
+}
+```
+
+##### Resposta da requisição
+
+```http
+{
+    "message": "Usuário deslogado com sucesso"
+}
+```
+#### Exemplo de HTTP 401
+#### Header da requisição
+```http
+{
+    "token" : ""
+}
+```
+##### Body da requisição
+```http
+{
+    "email" : "admin@admin8",
+    "password" : "12345678",
+}
+```
+
+##### Resposta da requisição
+```http
+{
+    "message": "Unauthenticated."
+}
+```
+
+#### INDEX ALERT
+
+```http
+  GET/alerts
+```
+Rota utilizada para retornar todos os alertas cadastrados, 
+essa rota só se torna acessível com usuários autenticados,
+caso contrário ela retorna um 401.
+
+#### Exemplo de HTTP 200
+##### Header da requisição
+```http
+{
+    "token" : "9|4xTlOdUIfwmPJQWWdUca6YbEpus2Lc1pez5lISfz"
+}
+```
+##### Resposta da requisição
+```http
+[
+    [
+        {
+            "id": 12,
+            "title": "Segunda tarefa alterada",
+            "description": "é uma tarefa a ser fazer",
+            "created_at": "2022-03-21T01:54:22.000000Z",
+            "updated_at": "2022-03-21T01:54:22.000000Z"
+        }
+    ]
+]
+```
+
+#### Exemplo de HTTP 401
+##### Header da requisição
+```http
+{
+    "token": ""
+}
+
+```
+##### Resposta da requisição
+```http
+{
+    "message": "Unauthenticated."
+}
+```
+
+#### STORE ALERT
+
+```http
+  POST/alerts
+```
+Rota utilizada para cadastrar alertas, para o cadastro precisa ser
+um usuário autenticado caso contrário ele retorna um 401.
+
+#### Exemplo de HTTP 200
+
+
+| Parâmetro   | Tipo       | Descrição                                   |
+| :---------- | :--------- | :------------------------------------------ |
+| `title`      | `string` | **Obrigatório**. Título do alerta |
+| `description`| `string` | **Obrigatório**. Descrição do alerta |
+
+##### Header da requisição
+```http
+{
+    "token": "9|4xTlOdUIfwmPJQWWdUca6YbEpus2Lc1pez5lISfz"
+}
+```
+
+##### Body da requisição
+```http
+{
+    {
+    "title": "Segunda tarefa alterada",
+    "description": "é uma tarefa a ser fazer"
+    }
+}
+```
+
+##### Resposta da requisição
+```http
+
+    {
+        "title": "Segunda tarefa alterada",
+        "description": "é uma tarefa a ser fazer",
+        "updated_at": "2022-03-21T02:06:34.000000Z",
+        "created_at": "2022-03-21T02:06:34.000000Z",
+        "id": 13
+    }
+]
+```
+
+
+#### Exemplo de HTTP 422
+##### Header da requisição
+```http
+{
+    "token": "9|4xTlOdUIfwmPJQWWdUca6YbEpus2Lc1pez5lISfz"
+}
+
+```
+##### Body da requisição
+```http
+{
+    {
+    "title": "",
+    "description": "é uma tarefa a ser fazer"
+    }
+}
+```
+
+##### Resposta da requisição
+```http
+{
+    "message": "The given data was invalid.",
+    "errors": {
+        "title": [
+            "The title field is required."
+        ]
+    }
+}
+```
+#### Exemplo HTTP 500
+
+Se por algum motivo o alerta passar pelas request mas não conseguir
+ser criado ele retorna um HTTP 500.
+
+
+#### SHOW ALERT
+
+```http
+  GET/alerts/{id}
+```
+Rota utilizada para mostrar alertas específicos de acordo com o id,
+para ter acesso a essa rota o usuário precisa ser 
+autenticado caso contrário ele retorna um 401.
+
+#### Exemplo de HTTP 200
+##### Header da requisição
+```http
+{
+    "token": "9|4xTlOdUIfwmPJQWWdUca6YbEpus2Lc1pez5lISfz"
+}
+```
+##### Rota da requisição
+```http
+http://127.0.0.1:8000/api/alerts/13
+```
+
+##### Resposta da requisição
+```http
+[
+    [
+        {
+            "id": 13,
+            "title": "Segunda tarefa alterada",
+            "description": "é uma tarefa a ser fazer",
+            "created_at": "2022-03-21T02:06:34.000000Z",
+            "updated_at": "2022-03-21T02:06:34.000000Z"
+        }
+    ]
+]
+```
+
+
+#### Exemplo de HTTP 404
+##### Header da requisição
+```http
+{
+    "token": "9|4xTlOdUIfwmPJQWWdUca6YbEpus2Lc1pez5lISfz"
+}
+
+```
+##### Rota da requisição
+```http
+http://127.0.0.1:8000/api/alerts/1
+```
+
+##### Resposta da requisição
+```http
+{
+    "message": "Não conseguimos encontrar esse alerta"
+}
+```
+
+#### UPDATE ALERT
+
+```http
+  PUT|PATCH /alerts/{id}
+```
+Rota utilizada para atualizar alerta de acordo com o id,
+para ter acesso a essa rota o usuário precisa ser 
+autenticado caso contrário ele retorna um 401.
+
+| Parâmetro   | Tipo       | Descrição                                   |
+| :---------- | :--------- | :------------------------------------------ |
+| `title`      | `string` | **Obrigatório**. Título do alerta |
+| `description`| `string` | **Obrigatório**. Descrição do alerta |
+
+#### Exemplo de HTTP 200
+##### Header da requisição
+```http
+{
+    "token": "9|4xTlOdUIfwmPJQWWdUca6YbEpus2Lc1pez5lISfz"
+}
+```
+##### Body da requisição
+```http
+{
+    {
+    "title": "Teste",
+    "description": "Teste"
+    }
+}
+
+```
+
+##### Resposta da requisição
+```http
+[
+    {
+        "id": 13,
+        "title": "Teste",
+        "description": "Teste",
+        "created_at": "2022-03-21T02:06:34.000000Z",
+        "updated_at": "2022-03-21T11:28:24.000000Z"
+    }
+]
+```
+
+
+#### Exemplo de HTTP 422
+##### Header da requisição
+```http
+{
+    "token": "9|4xTlOdUIfwmPJQWWdUca6YbEpus2Lc1pez5lISfz"
+}
+
+```
+##### Body da requisição
+```http
+{
+    {
+    "title": "",
+    "description": ""
+    }
+}
+```
+
+##### Resposta da requisição
+```http
+{
+    "message": "The given data was invalid.",
+    "errors": {
+        "title": [
+            "The title field is required."
+        ],
+        "description": [
+            "The description field is required."
+        ]
+    }
+}
+```
+
+#### Exemplo de HTTP 404
+##### Header da requisição
+```http
+{
+    "token": "9|4xTlOdUIfwmPJQWWdUca6YbEpus2Lc1pez5lISfz"
+}
+
+```
+##### Body da requisição
+```http
+{
+    {
+    "title": "Teste 2",
+    "description": "Teste 2"
+    }
+}
+```
+
+##### Resposta da requisição
+```http
+{
+    "message": "Não conseguimos encontrar esse alerta"
+}
+```
+
+
+#### DELETE ALERT
+
+```http
+  DELETE/alerts/{id}
+```
+Rota utilizada para deletar alerta de acordo com o id,
+para ter acesso a essa rota o usuário precisa ser 
+autenticado caso contrário ele retorna um 401.
+
+#### Exemplo de HTTP 200
+##### Header da requisição
+```http
+{
+    "token": "9|4xTlOdUIfwmPJQWWdUca6YbEpus2Lc1pez5lISfz"
+}
+```
+
+##### Rota da requisição
+```http
+
+http://127.0.0.1:8000/api/alerts/1
+
+```
+##### Resposta da requisição 
+
+{
+    "message": "O alerta foi excluído com sucesso"
+}
+
+
+#### Exemplo de HTTP 404
+##### Header da requisição
+```http
+{
+    "token": "9|4xTlOdUIfwmPJQWWdUca6YbEpus2Lc1pez5lISfz"
+}
+
+```
+##### Rota da requisição
+```http
+
+http://127.0.0.1:8000/api/alerts/12
+
+```
+
+##### Resposta da requisição
+```http
+{
+    "message": "Não foi possivel encontrar o alerta"
+}
+```
+### Dúvidas
+Qualquer dúvida contactar o email rebecajuliaa9@gmail.com
