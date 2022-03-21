@@ -225,7 +225,7 @@ um usuário autenticado caso contrário ele retorna um 401.
 
 ##### Resposta da requisição
 ```http
-
+{
     {
         "title": "Segunda tarefa alterada",
         "description": "é uma tarefa a ser fazer",
@@ -458,11 +458,11 @@ http://127.0.0.1:8000/api/alerts/1
 
 ```
 ##### Resposta da requisição 
-
+```http
 {
     "message": "O alerta foi excluído com sucesso"
 }
-
+```
 
 #### Exemplo de HTTP 404
 ##### Header da requisição
