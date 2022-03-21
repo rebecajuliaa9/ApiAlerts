@@ -1,5 +1,7 @@
 ## Documentação da API
 
+Essa API realiza o cadastro de usuários e alertas. 
+
 #### CREATE USER
 
 ```http
