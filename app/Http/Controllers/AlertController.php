@@ -86,7 +86,7 @@ class AlertController extends Controller
 
         //se não houver alerta ele já lanca a mensagem de erro.
         if(!$alert)
-            return response()->json(['message' => 'Não foi possivel atualizar esse alerta.'], 404);
+            return response()->json(['message' => 'Não foi possivel encontrar esse alerta.'], 404);
         
         //verificar se existe alerta
         if($alert){
@@ -116,7 +116,7 @@ class AlertController extends Controller
 
         if(!$alert)
             return response()->json([
-                'message' => 'Não foi possivel excluir o alerta'
+                'message' => 'Não foi possivel encontrar o alerta'
             ], 404);
         
         $alert->delete();
